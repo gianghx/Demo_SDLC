@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: junit-with-failures
+expected_outcome: |
+  A Vietnamese test report built from results.xml: 12 tests (8 passed, 2 failed, 1 error, 1 skipped), a stated pass-rate formula, the three problem tests (TC-003, TC-007, TC-010) with their messages, a traceability table to US ids, unprovided details left as [TBD], and a recommendation that is not a plain Go.
+context:
+  scaffold_script: place-files.sh

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="ChatWithDocs" tests="12" failures="2" errors="1" skipped="1" time="48.7">
+    <testcase classname="upload" name="TC-001 US-005 upload valid pdf under 100MB" time="2.1"/>
+    <testcase classname="upload" name="TC-002 US-005 reject pdf over 100MB" time="1.4"/>
+    <testcase classname="upload" name="TC-003 US-005 reject 101st file per user" time="3.0">
+      <failure message="Expected HTTP 413, got 200 OK">AssertionError: Expected HTTP 413, got 200 OK</failure>
+    </testcase>
+    <testcase classname="auth" name="TC-004 US-002 unauthenticated user redirected to login" time="0.8"/>
+    <testcase classname="auth" name="TC-005 US-001 pending account cannot login" time="0.9"/>
+    <testcase classname="ask" name="TC-006 US-010 ask question across documents" time="9.5"/>
+    <testcase classname="ask" name="TC-007 US-011 answer cites correct page" time="8.7">
+      <failure message="Citation page 4 expected, got 7">AssertionError: Citation page 4 expected, got 7</failure>
+    </testcase>
+    <testcase classname="ask" name="TC-008 US-012 not-found message when no answer" time="7.9"/>
+    <testcase classname="library" name="TC-009 US-008 owner deletes own document" time="1.2"/>
+    <testcase classname="library" name="TC-010 US-009 admin deletes any document" time="10.0">
+      <error message="ConnectionError: timeout connecting to test database">ConnectionError: timeout connecting to test database</error>
+    </testcase>
+    <testcase classname="ask" name="TC-011 US-013 bilingual question vi-en" time="0.0">
+      <skipped message="model API key not configured in CI"/>
+    </testcase>
+    <testcase classname="library" name="TC-012 US-008 non-owner cannot delete" time="1.2"/>
+  </testsuite>
+</testsuites>
