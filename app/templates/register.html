@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Đăng ký{% endblock %}
+{% block body %}
+<main class="narrow">
+  <div class="card">
+    <h1>Đăng ký tài khoản</h1>
+    {% if message %}<div class="msg {{ 'ok' if ok else 'bad' }}">{{ message }}</div>{% endif %}
+    <form method="post" action="/register">
+      <label for="email">Email</label>
+      <input id="email" name="email" type="text" value="{{ form.email or '' }}" required autofocus>
+      <label for="display_name">Tên hiển thị</label>
+      <input id="display_name" name="display_name" value="{{ form.display_name or '' }}" required>
+      <label for="password">Mật khẩu (tối thiểu 6 ký tự)</label>
+      <input id="password" name="password" type="password" minlength="6" required>
+      <p><button class="primary" type="submit">Gửi đăng ký</button></p>
+    </form>
+    <p class="muted"><a href="/login">Quay lại đăng nhập</a></p>
+  </div>
+</main>
+{% endblock %}

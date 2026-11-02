@@ -63,6 +63,10 @@ def main():
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
 
+    # Console Windows mặc định cp1252 không in được tiếng Việt trong thông báo lỗi của test.
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+
     try:
         result = summarize(args.files, args.id_pattern)
     except (ET.ParseError, OSError) as exc:

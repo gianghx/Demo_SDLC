@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="35" time="23.170" timestamp="2026-11-02T20:58:24.172436+07:00" hostname="DESKTOP-O6KUG2C"><testcase classname="tests.test_accounts" name="test_tc001_register_creates_pending" time="0.146" /><testcase classname="tests.test_accounts" name="test_tc002_invalid_data_shows_error_and_keeps_input" time="0.075"><failure message="assert ('value=&quot;bad-email&quot;' in '&lt;!doctype html&gt;\n&lt;html lang=&quot;vi&quot;&gt;\n&lt;head&gt;\n  &lt;meta charset=&quot;utf-8&quot;&gt;\n  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-wi...\n    &lt;/form&gt;\n    &lt;p class=&quot;muted&quot;&gt;&lt;a href=&quot;/login&quot;&gt;Quay lại đăng nhập&lt;/a&gt;&lt;/p&gt;\n  &lt;/div&gt;\n&lt;/main&gt;\n\n&lt;/body&gt;\n&lt;/html&gt;')&#10;[+1 more line; full report in element text]">env = None
+
+    def test_tc002_invalid_data_shows_error_and_keeps_input(env):
+        r = _register(new_client(), "bad-email", "Tên Tôi", "secret1")
+        assert r.status_code == 400 and "không hợp lệ" in r.text
+&gt;       assert 'value="bad-email"' in r.text and 'value="Tên Tôi"' in r.text  # giữ dữ liệu đã nhập
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       assert ('value="bad-email"' in '&lt;!doctype html&gt;\n&lt;html lang="vi"&gt;\n&lt;head&gt;\n  &lt;meta charset="utf-8"&gt;\n  &lt;meta name="viewport" content="width=device-wi...\n    &lt;/form&gt;\n    &lt;p class="muted"&gt;&lt;a href="/login"&gt;Quay lại đăng nhập&lt;/a&gt;&lt;/p&gt;\n  &lt;/div&gt;\n&lt;/main&gt;\n\n&lt;/body&gt;\n&lt;/html&gt;')
+E        +  where '&lt;!doctype html&gt;\n&lt;html lang="vi"&gt;\n&lt;head&gt;\n  &lt;meta charset="utf-8"&gt;\n  &lt;meta name="viewport" content="width=device-wi...\n    &lt;/form&gt;\n    &lt;p class="muted"&gt;&lt;a href="/login"&gt;Quay lại đăng nhập&lt;/a&gt;&lt;/p&gt;\n  &lt;/div&gt;\n&lt;/main&gt;\n\n&lt;/body&gt;\n&lt;/html&gt;' = &lt;Response [400 Bad Request]&gt;.text
+
+tests\test_accounts.py:45: AssertionError</failure></testcase><testcase classname="tests.test_accounts" name="test_tc003_duplicate_email_pending_and_approved" time="0.196" /><testcase classname="tests.test_accounts" name="test_tc004_reregister_after_rejected_and_auto_rejected" time="0.408" /><testcase classname="tests.test_accounts" name="test_tc005_login_approved_logs_event" time="0.357" /><testcase classname="tests.test_accounts" name="test_tc006_wrong_credentials" time="0.219" /><testcase classname="tests.test_accounts" name="test_tc007_pending_cannot_login" time="0.192" /><testcase classname="tests.test_accounts" name="test_tc008_rejected_and_auto_rejected_cannot_login" time="0.316" /><testcase classname="tests.test_accounts" name="test_tc009_unauthenticated_cannot_access" time="0.115" /><testcase classname="tests.test_accounts" name="test_tc010_admin_approves" time="0.272" /><testcase classname="tests.test_accounts" name="test_tc011_admin_rejects" time="0.261" /><testcase classname="tests.test_accounts" name="test_tc012_admin_page_with_no_pending" time="0.130" /><testcase classname="tests.test_accounts" name="test_tc013_member_cannot_use_admin_endpoints" time="0.302" /><testcase classname="tests.test_accounts" name="test_tc014_tc015_tc016_auto_reject_after_7_days" time="0.362"><failure message="assert 0 == 1&#10; +  where 0 = &lt;function auto_reject_expired at 0x000002D2F0394220&gt;(&lt;sqlite3.Connection object at 0x000002D2FFCE7880&gt;)&#10; +    where &lt;function auto_reject_expired at 0x000002D2F0394220&gt; = auth_service.auto_reject_expired">env = None
+
+    def test_tc014_tc015_tc016_auto_reject_after_7_days(env):
+        admin = admin_client()
+        _register(new_client(), "old@x.com")
+        _register(new_client(), "new@x.com")
+        make_member(admin, "approved@x.com")
+        _set("old@x.com", registered_at=_old(config.APPROVAL_EXPIRY_DAYS) )
+        _set("new@x.com", registered_at=_old(config.APPROVAL_EXPIRY_DAYS - 1))   # còn trong hạn
+        _set("approved@x.com", registered_at=_old(30))                           # đã được duyệt từ lâu
+        with db.session() as conn:
+&gt;           assert auth_service.auto_reject_expired(conn) == 1
+E           assert 0 == 1
+E            +  where 0 = &lt;function auto_reject_expired at 0x000002D2F0394220&gt;(&lt;sqlite3.Connection object at 0x000002D2FFCE7880&gt;)
+E            +    where &lt;function auto_reject_expired at 0x000002D2F0394220&gt; = auth_service.auto_reject_expired
+
+tests\test_accounts.py:163: AssertionError</failure></testcase><testcase classname="tests.test_accounts" name="test_tc017_seeded_admin_can_approve_and_delete" time="0.279" /><testcase classname="tests.test_library" name="test_tc018_upload_valid_pdf_becomes_ready_and_others_can_ask" time="0.428" /><testcase classname="tests.test_library" name="test_tc019_file_of_exactly_100mb_accepted" time="13.733" /><testcase classname="tests.test_library" name="test_tc020_file_over_100mb_rejected" time="0.494" /><testcase classname="tests.test_library" name="test_tc021_tc022_not_pdf_and_corrupted_with_reason" time="0.298" /><testcase classname="tests.test_library" name="test_tc023_tc024_tc025_quota_of_100_counts_total_uploaded" time="0.353" /><testcase classname="tests.test_library" name="test_tc026_unreadable_scan_not_used_for_queries" time="0.285" /><testcase classname="tests.test_library" name="test_tc029_documents_persist_across_logout_login_and_shared" time="0.446" /><testcase classname="tests.test_library" name="test_tc032_tc033_tc034_delete_permissions" time="0.421" /><testcase classname="tests.test_library" name="test_unit_language_detection_rules" time="0.000" /><testcase classname="tests.test_library" name="test_unit_chunking_keeps_text_and_overlap" time="0.000" /><testcase classname="tests.test_qa" name="test_tc045_empty_question_rejected" time="0.285" /><testcase classname="tests.test_qa" name="test_tc046_question_length_boundary" time="0.273" /><testcase classname="tests.test_qa" name="test_tc047_no_ready_documents_guides_upload" time="0.254" /><testcase classname="tests.test_qa" name="test_stub_answer_cites_correct_page" time="0.277" /><testcase classname="tests.test_qa" name="test_stub_not_found_when_nothing_relevant" time="0.276" /><testcase classname="tests.test_qa" name="test_stub_retrieval_spans_all_documents" time="0.326" /><testcase classname="tests.test_qa" name="test_deleted_document_file_returns_404" time="0.284" /><testcase classname="tests.test_qa" name="test_tc054_report_shows_active_users_metric" time="0.381"><failure message="assert ('MET-002' in '&lt;!doctype html&gt;\n&lt;html lang=&quot;vi&quot;&gt;\n&lt;head&gt;\n  &lt;meta charset=&quot;utf-8&quot;&gt;\n  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-wi...ng nghiên cứu tác vụ mẫu, không có ở đây. MET-003 đo bằng bộ câu hỏi chuẩn.&lt;/p&gt;\n  &lt;/div&gt;\n&lt;/main&gt;\n\n&lt;/body&gt;\n&lt;/html&gt;' and '50%' in '&lt;!doctype html&gt;\n&lt;html lang=&quot;vi&quot;&gt;\n&lt;head&gt;\n  &lt;meta charset=&quot;utf-8&quot;&gt;\n  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-wi...ng nghiên cứu tác vụ mẫu, không có ở đây. MET-003 đo bằng bộ câu hỏi chuẩn.&lt;/p&gt;\n  &lt;/div&gt;\n&lt;/main&gt;\n\n&lt;/...&#10;[truncated; full report in element text]">env = None
+
+    def test_tc054_report_shows_active_users_metric(env):
+        admin = admin_client()
+        member = make_member(admin, "u@x.com")
+        make_member(admin, "idle@x.com")
+        upload(member, ["The refund policy allows returns within thirty days."])
+        _ask(member, "What is the refund policy?")
+        with db.session() as conn:
+            rep = report.pilot_report(conn)
+        assert rep["approved_members"] == 2 and rep["active_last_7_days"] == 1 and rep["active_rate"] == 0.5
+        page = admin.get("/admin").text
+&gt;       assert "MET-002" in page and "50%" in page
+E       assert ('MET-002' in '&lt;!doctype html&gt;\n&lt;html lang="vi"&gt;\n&lt;head&gt;\n  &lt;meta charset="utf-8"&gt;\n  &lt;meta name="viewport" content="width=device-wi...ng nghiên cứu tác vụ mẫu, không có ở đây. MET-003 đo bằng bộ câu hỏi chuẩn.&lt;/p&gt;\n  &lt;/div&gt;\n&lt;/main&gt;\n\n&lt;/body&gt;\n&lt;/html&gt;' and '50%' in '&lt;!doctype html&gt;\n&lt;html lang="vi"&gt;\n&lt;head&gt;\n  &lt;meta charset="utf-8"&gt;\n  &lt;meta name="viewport" content="width=device-wi...ng nghiên cứu tác vụ mẫu, không có ở đây. MET-003 đo bằng bộ câu hỏi chuẩn.&lt;/p&gt;\n  &lt;/div&gt;\n&lt;/main&gt;\n\n&lt;/body&gt;\n&lt;/html&gt;')
+
+tests\test_qa.py:89: AssertionError</failure></testcase><testcase classname="tests.test_qa" name="test_tc056_report_with_no_data" time="0.130" /><testcase classname="tests.test_qa" name="test_tc059_events_recorded_with_properties_and_no_content" time="0.332"><failure message="AssertionError: assert 'wait_time' in {'wait_hours': 0.0}">env = None
+
+    def test_tc059_events_recorded_with_properties_and_no_content(env):
+        admin = admin_client()
+        member = make_member(admin, "u@x.com")
+        new_client().post("/login", data={"email": "ghost@x.com", "password": "x"})            # LOGIN_FAILED
+        member.post("/api/documents", files={"file": ("a.txt", b"text", "text/plain")})        # DOCUMENT_REJECTED
+        upload(member, ["The refund policy allows returns within thirty days."])
+        _ask(member, "What is the refund policy?")                                             # QUESTION/ANSWER
+        with db.session() as conn:
+            doc_id = conn.execute("SELECT id FROM documents").fetchone()["id"]
+        member.head(f"/documents/{doc_id}/file")                                               # CITATION_OPENED
+        member.post(f"/api/documents/{doc_id}/delete")                                         # DOCUMENT_DELETED
+        with db.session() as conn:
+            types = {r["type"] for r in conn.execute("SELECT DISTINCT type FROM usage_events")}
+        expected = {"REGISTER_SUBMITTED", "ACCOUNT_APPROVED", "LOGIN_SUCCESS", "LOGIN_FAILED",
+                    "DOCUMENT_UPLOAD_STARTED", "DOCUMENT_READY", "DOCUMENT_REJECTED", "DOCUMENT_DELETED",
+                    "QUESTION_SUBMITTED", "ANSWER_RETURNED", "CITATION_OPENED"}
+        assert expected &lt;= types
+&gt;       assert "wait_time" in _events("ACCOUNT_APPROVED")[-1]                    # PRD EVT-002
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert 'wait_time' in {'wait_hours': 0.0}
+
+tests\test_qa.py:114: AssertionError</failure></testcase></testsuite></testsuites>

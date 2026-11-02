@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Chat với tài liệu{% endblock %}
+{% block body %}
+<header>
+  <strong>Chat với tài liệu</strong>
+  <span>{{ me.name }}
+    {% if me.admin %}<a href="/admin">Quản trị</a>{% endif %}
+    <form method="post" action="/logout" style="display:inline"><button type="submit">Đăng xuất</button></form></span>
+</header>
+<main style="display:grid; grid-template-columns: minmax(0,1fr) minmax(0,1.3fr); gap:16px; align-items:start;">
+  <section class="card">
+    <h2>Kho tài liệu chung</h2>
+    <form id="upload-form">
+      <input id="file" type="file" accept="application/pdf,.pdf" required>
+      <p><button class="primary" type="submit">Upload PDF</button>
+         <span class="muted">tối đa {{ me.max_file_mb }} MB mỗi tệp</span></p>
+    </form>
+    <div id="upload-msg"></div>
+    <table id="docs"><tbody></tbody></table>
+    <p id="docs-empty" class="muted" hidden>Kho trống. Upload PDF để bắt đầu.</p>
+  </section>
+
+  <section class="card">
+    <h2>Hỏi đáp</h2>
+    <div id="chat" style="min-height:220px; max-height:55vh; overflow:auto;"></div>
+    <form id="ask-form">
+      <textarea id="question" rows="3" maxlength="{{ me.max_question }}" placeholder="Hỏi bằng tiếng Việt hoặc tiếng Anh..." required></textarea>
+      <p><button class="primary" id="ask-btn" type="submit">Gửi</button>
+         <span class="muted">Hội thoại không được lưu: tải lại trang là mất.</span></p>
+    </form>
+  </section>
+</main>
+
+<script>
+const STATUS = { PROCESSING: "Đang xử lý", READY: "Sẵn sàng", UNREADABLE: "Không đọc được (bản scan?)", FAILED: "Lỗi xử lý" };
+const $ = (id) => document.getElementById(id);
+const el = (tag, text, cls) => { const e = document.createElement(tag); if (text !== undefined) e.textContent = text; if (cls) e.className = cls; return e; };
+
+async function loadDocs() {
+  const res = await fetch("/api/documents");
+  if (res.status === 401) { location.href = "/login"; return; }
+  const docs = await res.json();
+  const body = $("docs").querySelector("tbody");
+  body.replaceChildren();
+  $("docs-empty").hidden = docs.length > 0;
+  for (const d of docs) {
+    const tr = el("tr");
+    tr.append(el("td", d.file_name), el("td", STATUS[d.status] || d.status),
+              el("td", (d.language || "—") + " · " + d.page_count + " tr"), el("td", d.uploader));
+    const td = el("td");
+    if (d.can_delete) {
+      const b = el("button", "Xóa", "small");
+      b.onclick = async () => {
+        if (!confirm("Xóa vĩnh viễn \"" + d.file_name + "\"?")) return;
+        const r = await fetch("/api/documents/" + d.id + "/delete", { method: "POST" });
+        if (!r.ok) alert("Không xóa được.");
+        loadDocs();
+      };
+      td.append(b);
+    }
+    tr.append(td);
+    body.append(tr);
+  }
+  if (docs.some(d => d.status === "PROCESSING")) setTimeout(loadDocs, 2000);
+}
+
+$("upload-form").onsubmit = async (e) => {
+  e.preventDefault();
+  const f = $("file").files[0];
+  const msg = $("upload-msg");
+  msg.replaceChildren();
+  const fd = new FormData(); fd.append("file", f);
+  try {
+    const res = await fetch("/api/documents", { method: "POST", body: fd });
+    const data = await res.json();
+    msg.append(el("div", data.ok ? "Đã nhận tệp, đang xử lý." : data.message, "msg " + (data.ok ? "ok" : "bad")));
+    if (data.ok) $("file").value = "";
+  } catch { msg.append(el("div", "Mất kết nối khi upload. Thử lại.", "msg bad")); }
+  loadDocs();
+};
+
+function addMsg(text, who) {
+  const box = el("div", text, "msg"); box.style.whiteSpace = "pre-wrap";
+  if (who === "me") box.style.textAlign = "right";
+  $("chat").append(box); $("chat").scrollTop = $("chat").scrollHeight; return box;
+}
+
+function addCitations(box, citations) {
+  if (!citations.length) return;
+  const wrap = el("div", "Nguồn: ", "muted"); wrap.style.marginTop = "6px";
+  for (const c of citations) {
+    const a = el("a", c.document_name + ", trang " + c.page); a.href = "/documents/" + c.document_id + "/file#page=" + c.page;
+    a.target = "_blank"; a.style.marginRight = "10px";
+    a.onclick = async (ev) => {
+      ev.preventDefault();
+      const r = await fetch("/documents/" + c.document_id + "/file", { method: "HEAD" });
+      if (r.ok) window.open(a.href, "_blank"); else { a.textContent = c.document_name + " (đã xóa)"; a.removeAttribute("href"); }
+    };
+    wrap.append(a);
+  }
+  box.append(wrap);
+}
+
+$("ask-form").onsubmit = async (e) => {
+  e.preventDefault();
+  const q = $("question").value.trim();
+  if (!q) return;
+  addMsg(q, "me");
+  const waiting = addMsg("Đang tìm trong tài liệu...", "bot");
+  $("ask-btn").disabled = true;
+  try {
+    const res = await fetch("/api/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question: q }) });
+    const data = await res.json();
+    if (!res.ok) { waiting.textContent = data.message || "Có lỗi xảy ra."; }
+    else if (data.not_found) { waiting.textContent = "Không tìm thấy thông tin này trong tài liệu."; }
+    else { waiting.textContent = data.answer; addCitations(waiting, data.citations); }
+    if (res.ok) $("question").value = "";
+  } catch { waiting.textContent = "Không gửi được (mất kết nối). Câu hỏi vẫn còn trong ô nhập."; }
+  $("ask-btn").disabled = false;
+};
+
+loadDocs();
+</script>
+{% endblock %}
