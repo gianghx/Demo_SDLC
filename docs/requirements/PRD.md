@@ -2,7 +2,7 @@
 
 > Chuẩn áp dụng: IEEE 29148-2018. Prompt nguồn: `docs/PRD_Prompt_IEEE_standard.md`.
 > Đầu vào: `docs/requirements/BRD.md` v0.7 (BR-001..BR-020, MET-001..003, SRC-001..006). Không có SRS riêng.
-> Quy ước: `[Proposed]` = đề xuất của PM, cần xác nhận. `[TBD: OQ-xxx]` = chờ câu hỏi mở. Phiên bản này: 0.2, Draft, 2026-10-20.
+> Quy ước: `[Proposed]` = đề xuất của PM, cần xác nhận. `[TBD: OQ-xxx]` = chờ câu hỏi mở. Phiên bản này: 0.5, Draft, 2026-10-20.
 
 ---
 
@@ -19,7 +19,7 @@
 **Điểm cần lưu ý trước khi dùng PRD:**
 1. Hạn rất gấp: pilot bắt đầu 2026-11-03, 20 yêu cầu (RSK-006). PRD đánh dấu P0/P1 để có thể cắt P1 khi cần.
 2. Baseline và target do người yêu cầu ước lượng, chưa đo (ASM-004). OKR dùng được cho pilot nhưng cần đo lại baseline trước 2026-11-03.
-3. Các câu hỏi chưa trả lời ảnh hưởng thiết kế: câu trả lời dựa trên tài liệu khác ngôn ngữ nhau (OQ-025), lịch sử chat (OQ-013), phạm vi loại trừ (OQ-010), thông báo khi tự động từ chối (OQ-026). PRD đưa ra giả định tạm cho từng câu.
+3. Các câu hỏi phụ (ngôn ngữ khi nguồn trộn, độ dài câu hỏi, ghi nội dung, đăng ký lại, phạm vi loại trừ) đã được BA quyết định theo ủy quyền ngày 2026-11-02. Còn mở: OQ-015, OQ-017.
 
 ---
 
@@ -71,7 +71,7 @@ flowchart LR
     J --> F
 ```
 
-**Điểm ma sát đã biết:** bước chờ admin duyệt (C) là điểm nghẽn, vì chỉ có một admin cho 30 người. Admin duyệt tối đa 7 ngày; quá hạn tự động từ chối (BR-022). Admin dự phòng: `[TBD: OQ-026]`.
+**Điểm ma sát đã biết:** bước chờ admin duyệt (C) là điểm nghẽn, vì chỉ có một admin cho 30 người. Admin duyệt tối đa 7 ngày; quá hạn tự động từ chối (BR-022). Không có admin dự phòng trong MVP (quyết định ủy quyền 2026-11-02, RSK-008).
 
 ---
 
@@ -85,7 +85,7 @@ Quy ước ưu tiên: **P0** = Must (BRD Must), **P1** = Should, **P2** = Nice-t
 |---|---|---|---|---|
 | EP-01 | Tài khoản và truy cập | US-001..US-004, US-016 | BR-012, BR-018, BR-019, BR-020, BR-022 | PER-01, PER-02 |
 | EP-02 | Kho tài liệu | US-005..US-009 | BR-001, BR-002, BR-003, BR-004, BR-013, BR-016, BR-017 | PER-01, PER-02 |
-| EP-03 | Hỏi đáp | US-010..US-014 | BR-005, BR-006, BR-007, BR-008, BR-011, BR-015, BR-021 | PER-01 |
+| EP-03 | Hỏi đáp | US-010..US-013 (US-014 loại khỏi MVP) | BR-005, BR-006, BR-007, BR-008, BR-011, BR-015, BR-021 | PER-01 |
 | EP-04 | Đo lường | US-015 | BR-014 | PER-03 |
 | NFR | Phi chức năng | NFR-001, NFR-002 | BR-009, BR-010 | Tất cả |
 
@@ -116,6 +116,7 @@ Quy ước ưu tiên: **P0** = Must (BRD Must), **P1** = Should, **P2** = Nice-t
 - Given tôi đã đăng nhập, When tôi upload một PDF hợp lệ không quá 100 MB, Then tài liệu xuất hiện trong kho và hiển thị trạng thái xử lý, rồi trạng thái sẵn sàng.
 - Given tôi đã upload 100 tệp, When tôi upload tệp thứ 101, Then hệ thống từ chối và nêu lý do (đạt giới hạn).
 - Given một PDF lớn hơn 100 MB, When tôi upload, Then hệ thống từ chối và nêu lý do (vượt dung lượng).
+- Given tôi đã upload 100 tệp và đã xóa một số tệp trong đó, When tôi upload thêm, Then hệ thống vẫn từ chối vì hạn mức tính tổng số tệp đã upload, kể cả đã xóa (BRU-007).
 
 **US-006 (P1) — Thông báo từ chối rõ ràng.** Là nhân viên BD, tôi muốn biết vì sao tệp bị từ chối, để tự xử lý. *(BR-003)* — Hiểu là mọi lý do từ chối: sai định dạng, tệp hỏng, vượt giới hạn.
 
@@ -144,9 +145,10 @@ Quy ước ưu tiên: **P0** = Must (BRD Must), **P1** = Should, **P2** = Nice-t
 **US-013 (P0) — Hai ngôn ngữ.** Là nhân viên BD, tôi muốn hỏi bằng tiếng Việt hoặc tiếng Anh về tài liệu viết bằng một trong hai, để không bị giới hạn ngôn ngữ. *(BR-011, BR-015, BR-021)*
 - Given tài liệu tiếng Việt hoặc tiếng Anh, When tôi hỏi bằng tiếng Việt, Then nhận câu trả lời đúng; When tôi hỏi bằng tiếng Anh, Then nhận câu trả lời đúng.
 - Given câu trả lời dựa trên tài liệu tiếng Việt, When tôi hỏi bằng tiếng Anh, Then câu trả lời bằng tiếng Việt; và ngược lại. Ngôn ngữ câu trả lời theo ngôn ngữ của tài liệu (quyết định 2026-10-20, BR-021).
-- Khi câu trả lời dựa trên nhiều tài liệu khác ngôn ngữ nhau: `[TBD: OQ-025]`.
+- Khi câu trả lời dựa trên cả tài liệu tiếng Việt lẫn tiếng Anh: trả lời bằng tiếng Anh (BRU-009, quyết định ủy quyền 2026-11-02).
+- Tài liệu có cả tiếng Việt lẫn tiếng Anh được coi là tiếng Anh, nên câu trả lời dựa trên tài liệu đó bằng tiếng Anh (BRU-008).
 
-**US-014 (P2) — Lịch sử hội thoại.** Là nhân viên BD, tôi muốn xem lại các câu hỏi trước, để không hỏi lại. Chưa có BR; chờ OQ-013. Không làm trong MVP nếu hết thời gian.
+**US-014 (Won't) — Lịch sử hội thoại.** Là nhân viên BD, tôi muốn xem lại các câu hỏi trước, để không hỏi lại. Quyết định 2026-11-02: không cần lưu lịch sử (OQ-013). Loại khỏi MVP; câu hỏi và câu trả lời chỉ tồn tại trong phiên.
 
 ### 3.5 EP-04 — Đo lường
 
@@ -159,7 +161,7 @@ Quy ước ưu tiên: **P0** = Must (BRD Must), **P1** = Should, **P2** = Nice-t
 |---|---|---|---|---|
 | NFR-001 (P1) | Thời gian trả lời | ≤ 30 giây cho 90% câu hỏi | BR-009 | Test trên bộ câu hỏi chuẩn. "10–30 giây" hiểu là ngưỡng tối đa 30 giây (OQ-006) |
 | NFR-002 (P0) | Độ chính xác | ≥ 90% trên bộ câu hỏi chuẩn; bộ câu hỏi có cả tiếng Việt và tiếng Anh | BR-010 | business owner chấm |
-| NFR-003 (P0) | Giới hạn dữ liệu | 100 MB mỗi tệp; 100 tệp mỗi người | BR-002, BR-016 | Test biên |
+| NFR-003 (P0) | Giới hạn dữ liệu | 100 MB mỗi tệp; 100 tệp mỗi người, tính tổng số đã upload kể cả đã xóa | BR-002, BR-016 | Test biên |
 | NFR-004 (P0) | Truy cập | Không truy cập kho khi chưa đăng nhập và được duyệt | BR-012, BR-020 | Test phân quyền |
 
 ---
@@ -192,14 +194,15 @@ Chi tiết điều hướng:
 | Tài liệu đang xử lý | Hiện trạng thái đang xử lý; câu hỏi chỉ dựa trên tài liệu đã sẵn sàng và nói rõ nếu còn tài liệu chưa sẵn sàng `[Proposed]` |
 | PDF không có văn bản đọc được (bản scan) | Báo tài liệu không đọc được nội dung, không đưa vào kết quả (ASM-001) |
 | Tệp sai định dạng, hỏng, quá lớn, quá số lượng | Từ chối kèm lý do cụ thể (US-006) |
-| Câu hỏi rỗng hoặc quá dài | Không gửi; nêu giới hạn `[TBD: OQ-023]` |
+| Câu hỏi rỗng hoặc quá dài | Không gửi; nêu giới hạn tối đa 1.000 ký tự (quyết định ủy quyền 2026-11-02) |
 | Không có đáp án trong tài liệu | Trả lời "không tìm thấy" (US-012) |
 | Quá thời gian trả lời | Hiện thông báo đang xử lý lâu và cho phép hủy hoặc thử lại `[Proposed]` |
-| Tài liệu nguồn đã bị xóa khi người dùng đang xem câu trả lời cũ | Báo tài liệu không còn tồn tại khi mở nguồn |
+| Tài liệu nguồn đã bị xóa khi người dùng đang xem câu trả lời cũ | Hiển thị tên tài liệu kèm nhãn "đã xóa"; không mở được nguồn (OQ-027) |
 | Phiên đăng nhập hết hạn | Chuyển về đăng nhập, giữ câu hỏi chưa gửi nếu có thể |
 | Hai người cùng upload một tệp trùng | Cho phép, hai bản riêng `[Proposed, chờ xác nhận]` |
-| Đăng ký bị tự động từ chối sau 7 ngày | Đăng nhập báo rõ lý do; cho phép đăng ký lại `[Proposed, chờ OQ-026]` |
-| Câu trả lời dựa trên tài liệu khác ngôn ngữ nhau | Chưa quyết định `[TBD: OQ-025]` |
+| Đăng ký bị tự động từ chối sau 7 ngày | Đăng nhập báo rõ lý do; cho phép đăng ký lại bằng cùng email (BRU-010) |
+| Câu trả lời dựa trên cả tài liệu tiếng Việt lẫn tiếng Anh | Trả lời bằng tiếng Anh (BRU-009) |
+| Tải lại trang hoặc đăng xuất | Khung chat trống; hội thoại không được lưu và không khôi phục (OQ-013). Nên báo cho người dùng biết ở lần đầu `[Proposed]` |
 
 ---
 
@@ -224,7 +227,7 @@ Chi tiết điều hướng:
 
 ### 5.2 Analytics và tracking
 
-Mọi sự kiện ghi kèm `user_id`, `timestamp`. Không ghi nội dung câu hỏi hoặc câu trả lời trong sự kiện nếu chưa có quyết định về quyền riêng tư `[TBD: OQ-024]`.
+Mọi sự kiện ghi kèm `user_id`, `timestamp`. Không ghi nội dung câu hỏi hoặc câu trả lời trong sự kiện (quyết định ủy quyền 2026-11-02, OQ-024).
 
 | ID | Sự kiện | Thuộc tính | Mục đích |
 |---|---|---|---|
@@ -236,7 +239,7 @@ Mọi sự kiện ghi kèm `user_id`, `timestamp`. Không ghi nội dung câu h�
 | EVT-006 | `question_submitted` | `language` | Mức dùng; MET-002; BR-015 |
 | EVT-007 | `answer_returned` | `latency_ms`, `has_citation`, `not_found` | NFR-001; BR-007, BR-008 |
 | EVT-008 | `citation_opened` | — | Mức kiểm chứng nguồn |
-| EVT-009 | `answer_feedback` (đúng/sai) | `answer_id` | Thu thập chất lượng thực tế, bổ trợ MET-003 `[Proposed, cần thêm story]` |
+| EVT-009 | (loại khỏi MVP) | — | Quyết định ủy quyền 2026-11-02: không làm phản hồi đúng/sai trong MVP vì chưa có story và hạn 14 ngày. MET-003 đo bằng bộ câu hỏi chuẩn |
 
 **Cách tính metric:**
 - **MET-002** = số người có ít nhất một `question_submitted` trong tuần / 30, tính theo tuần suốt pilot. Dùng hàng tuần được hiểu là có ít nhất một câu hỏi trong tuần `[Unverified]`.
@@ -271,15 +274,20 @@ Coverage: 22/22 BR có story hoặc NFR. US-014 (P2) chưa có BR, chờ OQ-013.
 
 | ID | Câu hỏi | Ảnh hưởng | Kế thừa |
 |---|---|---|---|
-| OQ-013 | Có lưu lịch sử chat không? | US-014 | BRD |
+| OQ-013 | Có lưu lịch sử chat không? | US-014 | BRD. **Đã đóng 2026-11-02**: không lưu; US-014 loại khỏi MVP |
 | OQ-014 | Ngôn ngữ câu trả lời: theo câu hỏi hay theo tài liệu? | US-013 | BRD. **Đã đóng 2026-10-20**: theo ngôn ngữ tài liệu (BR-021) |
-| OQ-010 | Xác nhận phạm vi loại trừ | Toàn PRD | BRD |
+| OQ-010 | Xác nhận phạm vi loại trừ | Toàn PRD | BRD. **Đã đóng 2026-11-02**: giữ nguyên danh sách |
 | OQ-015 | Ai review độc lập? | G10 | BRD |
 | OQ-022 | Admin duyệt đăng ký trong bao lâu (SLA)? Cần thêm admin dự phòng không? | Journey bước C, EVT-002 | Mới. **Đóng một phần 2026-10-20**: tối đa 7 ngày, quá hạn tự động từ chối (BR-022). Admin dự phòng: OQ-026 |
-| OQ-023 | Giới hạn độ dài câu hỏi? | Mục 4.2 | Mới |
-| OQ-024 | Có được ghi nội dung câu hỏi và câu trả lời để đánh giá chất lượng không? | Mục 5.2, EVT-009 | Mới |
-| OQ-025 | Khi câu trả lời dựa trên nhiều tài liệu khác ngôn ngữ nhau (Việt và Anh), trả lời bằng ngôn ngữ nào? | US-013, BR-021 | Mới |
-| OQ-026 | Người bị tự động từ chối có được thông báo và đăng ký lại không? Có admin dự phòng không? | US-016, journey bước C | Mới |
+| OQ-023 | Giới hạn độ dài câu hỏi? | Mục 4.2 | Mới. **Đã đóng 2026-11-02**: tối đa 1.000 ký tự |
+| OQ-024 | Có được ghi nội dung câu hỏi và câu trả lời để đánh giá chất lượng không? | Mục 5.2, EVT-009 | Mới. **Đã đóng 2026-11-02**: không ghi nội dung; loại EVT-009 |
+| OQ-025 | Khi câu trả lời dựa trên nhiều tài liệu khác ngôn ngữ nhau (Việt và Anh), trả lời bằng ngôn ngữ nào? | US-013, BR-021 | Mới. **Đã đóng 2026-11-02**: trả lời bằng tiếng Anh (BRU-009) |
+| OQ-026 | Người bị tự động từ chối có được thông báo và đăng ký lại không? Có admin dự phòng không? | US-016, journey bước C | Mới. **Đã đóng 2026-11-02**: đăng ký lại bằng cùng email (BRU-010); không có admin dự phòng trong MVP (RSK-008) |
+| OQ-027 | Nếu lưu lịch sử chat, Citation của câu trả lời cũ trỏ tới tài liệu đã xóa thì xử lý thế nào? | US-014, mục 4.2 | Mới (từ class diagram). **Đã đóng 2026-11-02**: giữ citation, báo "đã xóa" |
+| OQ-028 | Hạn mức 100 tệp mỗi người tính tệp đang có hay tổng số đã upload? Xóa rồi upload lại được không? | US-005, NFR-003 | Mới (từ class diagram). **Đã đóng 2026-11-02**: tính tổng số đã upload, xóa không hoàn lại (BRU-007); cần xác nhận cách hiểu: OQ-031 |
+| OQ-029 | Ngôn ngữ của tài liệu được xác định thế nào? PDF có cả tiếng Việt lẫn tiếng Anh thì gán ngôn ngữ nào? | US-013 | Mới (từ class diagram). **Đã đóng một phần 2026-11-02**: tài liệu có cả hai ngôn ngữ coi là tiếng Anh (BRU-008); cách nhận diện ngôn ngữ thuộc SAD |
+| OQ-030 | Nếu lưu lịch sử chat, nội dung câu trả lời cũ lấy từ tài liệu đã xóa có phải xóa hoặc che theo không? | US-008, US-014 | Mới (từ class diagram). **Đã đóng 2026-11-02**: không áp dụng vì không lưu lịch sử |
+| OQ-031 | "Xóa rồi thì không upload lại" nghĩa là chỉ xóa không hoàn lại hạn mức 100 tệp, hay còn cấm upload lại đúng tệp đã xóa? | US-005, NFR-003 | Mới. **Đã đóng 2026-11-02**: không cần cấm upload lại tệp đã xóa |
 
 ### 6.3 Giả định của PM
 
@@ -295,7 +303,6 @@ Coverage: 22/22 BR có story hoặc NFR. US-014 (P2) chưa có BR, chờ OQ-013.
 Đã đóng ngày 2026-10-20: trụ cột UX, ngôn ngữ câu trả lời (OQ-014), SLA duyệt tài khoản (OQ-022).
 
 Không chặn review nhưng cần đóng trước phát hành:
-- **OQ-025** — câu trả lời dựa trên tài liệu khác ngôn ngữ nhau (ảnh hưởng US-013, P0).
-- **OQ-026** — thông báo khi tự động từ chối, đăng ký lại, admin dự phòng.
-- **OQ-010, OQ-013, OQ-015, OQ-023, OQ-024**.
+- **OQ-015** — người review độc lập.
+- **OQ-017** — số tài liệu hiện có và tốc độ tăng.
 - Cổng G8 và G9: đo baseline MET-001 (ASM-004), rà soát PDF mẫu (ASM-003, ASM-005).

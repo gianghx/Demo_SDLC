@@ -15,12 +15,11 @@
 - SRC-005: câu trả lời vòng 4 của người yêu cầu, ngày 2026-10-20. Gồm admin duyệt tài khoản đăng ký, pilot bắt đầu sau 14 ngày.
 - SRC-006: câu trả lời vòng 5 của người yêu cầu, ngày 2026-10-20. Pilot kéo dài 60 ngày.
 - SRC-007: câu trả lời vòng 6 của người yêu cầu khi viết PRD, ngày 2026-10-20. Xác nhận trụ cột UX, ngôn ngữ câu trả lời, thời hạn duyệt tài khoản.
+- SRC-008: câu trả lời vòng 7 của người yêu cầu khi viết class diagram, ngày 2026-11-02. Gồm cách tính hạn mức tệp, ngôn ngữ của tài liệu có hai ngôn ngữ, cách hiển thị citation tới tài liệu đã xóa.
+- SRC-009: câu trả lời vòng 8 của người yêu cầu, ngày 2026-11-02. Không cần cấm upload lại tệp đã xóa; không cần lưu lịch sử chat.
+- SRC-010: ủy quyền của người yêu cầu, ngày 2026-11-02: "các câu hỏi phụ tự quyết định". BA quyết định OQ-010, OQ-012, OQ-023, OQ-024, OQ-025, OQ-026.
 
 **Còn thiếu:**
-- Phạm vi loại trừ chưa được xác nhận (OQ-010).
-- Lịch sử chat (OQ-013).
-- Mục tiêu độ tin cậy và bảo mật (OQ-012).
-- Ngôn ngữ câu trả lời khi nguồn gồm nhiều tài liệu khác ngôn ngữ nhau (OQ-025).
 - Người phê duyệt độc lập (OQ-015).
 - Tốc độ tăng tài liệu (OQ-017).
 
@@ -38,7 +37,7 @@
 | Tiêu đề | BRD — Công cụ "Chat với tài liệu" (MVP) |
 | Số tài liệu | BRD-CDT-001 |
 | Tổ chức | DEMO_SDLC (SRC-002) |
-| Phiên bản | 0.8 |
+| Phiên bản | 0.11 |
 | Trạng thái | In review |
 | Tác giả | Business Analyst |
 | Executive sponsor, business owner, problem owner | Business Analyst (theo SRC-002) |
@@ -56,6 +55,9 @@
 | 0.6 | 2026-10-20 | Business Analyst | Bổ sung SRC-006: pilot kéo dài 60 ngày, từ 2026-11-03 đến 2027-01-02; điền timeframe cho BO-001..003; đóng OQ-021 |
 | 0.7 | 2026-10-20 | Business Analyst | Chuyển trạng thái sang In review theo quyết định của người yêu cầu; OQ-010, OQ-012..OQ-017 và các assumption ASM-003..ASM-005 còn mở |
 | 0.8 | 2026-10-20 | Business Analyst | Đồng bộ với PRD, bổ sung SRC-007: câu trả lời theo ngôn ngữ tài liệu (BR-021), admin duyệt tối đa 7 ngày và quá hạn tự động từ chối (BR-022, BRU-006); thêm OQ-022..OQ-026; đóng OQ-014 |
+| 0.9 | 2026-11-02 | Business Analyst | Bổ sung SRC-008: hạn mức 100 tệp tính tổng số đã upload, xóa không hoàn lại hạn mức (BR-016, BRU-007); tài liệu có cả hai ngôn ngữ coi là tiếng Anh (BRU-008); thêm RSK-007, OQ-031; đóng OQ-028, OQ-029 |
+| 0.10 | 2026-11-02 | Business Analyst | Bổ sung SRC-009: không cần cấm upload lại tệp đã xóa (đóng OQ-031); không lưu lịch sử chat (đóng OQ-013, OQ-030; OQ-027 chỉ áp dụng trong phiên); thêm "lưu lịch sử hội thoại" vào ngoài phạm vi |
+| 0.11 | 2026-11-02 | Business Analyst | Bổ sung SRC-010: BA tự quyết các câu hỏi phụ theo ủy quyền. Thêm BRU-009 (nguồn trộn ngôn ngữ thì trả lời tiếng Anh), BRU-010 (đăng ký lại sau khi bị từ chối), RSK-008; đóng OQ-010, OQ-012, OQ-023..OQ-026 |
 
 ---
 
@@ -179,6 +181,7 @@ Tài liệu tăng nhanh (SRC-002). Quản lý đã yêu cầu làm MVP (SRC-001)
 | Ứng dụng di động | SRC-001 chỉ nêu ứng dụng web |
 | Tích hợp hệ thống nội bộ khác (CRM, DMS) | Không có trong SRC-001; MVP |
 | Chỉnh sửa hoặc tạo tài liệu | Mục tiêu chỉ là truy vấn |
+| Lưu lịch sử hội thoại | Quyết định 2026-11-02: không cần lưu (SRC-009). Câu hỏi và câu trả lời chỉ tồn tại trong phiên |
 
 **Hoãn lại (Deferred):** để sau MVP — định dạng khác, tích hợp hệ thống khác, báo cáo nâng cao `[Unverified]`.
 
@@ -220,7 +223,7 @@ Tài liệu tăng nhanh (SRC-002). Quản lý đã yêu cầu làm MVP (SRC-001)
 |---|---|---|---|---|---|---|---|
 | BR-001 | Khi người dùng BD cung cấp một tệp PDF hợp lệ, tổ chức **shall** đưa tệp đó vào kho tài liệu chung của đội BD để truy vấn. | Cần nguồn nội dung để hỏi đáp | SN-002, BO-002 | Must | AC-001 | Demonstration | Draft |
 | BR-002 | Tổ chức **shall** chấp nhận tệp PDF có dung lượng tối đa 100 MB mỗi tệp. | Giới hạn rõ để lập kế hoạch và kiểm thử | SN-002 | Must | AC-002 | Test | Draft |
-| BR-016 | Tổ chức **shall** cho phép mỗi người dùng upload tối đa 100 tệp. | Giới hạn rõ để lập kế hoạch dung lượng | SN-002 | Must | AC-016 | Test | Draft |
+| BR-016 | Tổ chức **shall** cho phép mỗi người dùng upload tối đa 100 tệp tính trên tổng số tệp đã upload, kể cả tệp đã xóa. | Giới hạn rõ để lập kế hoạch dung lượng; xóa không hoàn lại hạn mức (SRC-008) | SN-002 | Must | AC-016 | Test | Draft |
 | BR-003 | Khi tệp không được chấp nhận, tổ chức **shall** thông báo cho người dùng biết tệp bị từ chối và lý do. | Người dùng biết cách xử lý, tránh nghĩ tài liệu đã sẵn sàng | SN-002 | Should | AC-003 | Test | Draft |
 | BR-004 | Tổ chức **shall** giữ tài liệu đã đưa vào kho cho đến khi người dùng xóa. | Tránh upload lại mỗi lần | SN-001, SN-002 | Must | AC-004 | Test | Draft |
 
@@ -262,7 +265,7 @@ Tài liệu tăng nhanh (SRC-002). Quản lý đã yêu cầu làm MVP (SRC-001)
 |---|---|
 | AC-001 | Cho một PDF hợp lệ mẫu, tài liệu xuất hiện trong kho chung và người dùng khác trong đội hỏi được về nội dung của nó. |
 | AC-002 | Tệp PDF 100 MB được chấp nhận; tệp lớn hơn 100 MB bị từ chối. |
-| AC-016 | Người dùng upload được 100 tệp; tệp thứ 101 bị từ chối kèm thông báo. |
+| AC-016 | Người dùng upload được 100 tệp; tệp thứ 101 bị từ chối kèm thông báo. Sau khi xóa một số tệp, người dùng vẫn bị từ chối khi upload thêm vì hạn mức tính tổng số tệp đã upload. |
 | AC-003 | Với tệp không phải PDF hoặc bị hỏng, người dùng nhận thông báo từ chối có nêu lý do. |
 | AC-004 | Tài liệu đã đưa vào vẫn truy vấn được sau khi người dùng đăng xuất rồi quay lại, cho đến khi bị xóa. |
 | AC-005 | Với bộ câu hỏi chuẩn, mỗi câu hỏi nhận được câu trả lời dựa trên nội dung tài liệu. |
@@ -273,7 +276,7 @@ Tài liệu tăng nhanh (SRC-002). Quản lý đã yêu cầu làm MVP (SRC-001)
 | AC-010 | Tỷ lệ câu trả lời đúng trên bộ câu hỏi chuẩn từ 90% trở lên, do business owner chấm. |
 | AC-011 | Bộ câu hỏi chuẩn trên tài liệu tiếng Việt và trên tài liệu tiếng Anh đều đạt AC-010. |
 | AC-015 | Cùng một câu hỏi đặt bằng tiếng Việt và bằng tiếng Anh đều nhận câu trả lời đúng trên tài liệu bất kỳ trong hai ngôn ngữ. Ngôn ngữ câu trả lời theo BR-021. |
-| AC-021 | Câu hỏi bằng tiếng Anh về tài liệu tiếng Việt nhận câu trả lời bằng tiếng Việt; và ngược lại. Khi nguồn gồm tài liệu khác ngôn ngữ nhau: chờ OQ-025. |
+| AC-021 | Câu hỏi bằng tiếng Anh về tài liệu tiếng Việt nhận câu trả lời bằng tiếng Việt; và ngược lại. Khi nguồn gồm cả tài liệu tiếng Việt lẫn tiếng Anh: câu trả lời bằng tiếng Anh (BRU-009). |
 | AC-012 | Người chưa đăng nhập không xem và không truy vấn được kho; người dùng đã đăng nhập truy vấn được mọi tài liệu trong kho. |
 | AC-013 | Ngay sau khi người upload xác nhận xóa, tài liệu không còn trong danh sách và không xuất hiện trong câu trả lời từ truy vấn kế tiếp. Người dùng không phải người upload và không phải admin không xóa được tài liệu đó. |
 | AC-017 | Ngay sau khi admin xác nhận xóa một tài liệu do người khác upload, tài liệu không còn trong danh sách và không xuất hiện trong câu trả lời từ truy vấn kế tiếp. |
@@ -295,6 +298,10 @@ Tài liệu tăng nhanh (SRC-002). Quản lý đã yêu cầu làm MVP (SRC-001)
 | BRU-004 | Người upload được xóa tài liệu của mình; admin được xóa mọi tài liệu; người dùng khác không được xóa. | Policy | Dữ liệu tài liệu | Business Analyst | SRC-003 |
 | BRU-005 | Tài khoản tự đăng ký chỉ được dùng sau khi admin duyệt. | Policy | Quản lý tài khoản | Admin | SRC-005 |
 | BRU-006 | Admin duyệt tài khoản đăng ký trong tối đa 7 ngày; quá hạn thì đăng ký bị tự động từ chối. | Policy | Quản lý tài khoản | Admin | SRC-007 |
+| BRU-007 | Hạn mức 100 tệp tính trên tổng số tệp người dùng đã upload, kể cả tệp đã xóa; xóa tệp không hoàn lại hạn mức. | Policy | Upload tài liệu | Business Analyst | SRC-008 |
+| BRU-008 | Tài liệu có cả tiếng Việt lẫn tiếng Anh được coi là tài liệu tiếng Anh. | Policy | Ngôn ngữ tài liệu | Business Analyst | SRC-008 |
+| BRU-009 | Khi câu trả lời dựa trên cả tài liệu tiếng Việt lẫn tiếng Anh, câu trả lời bằng tiếng Anh. | Policy | Hỏi đáp | Business Analyst | SRC-010 (quyết định ủy quyền) |
+| BRU-010 | Người có tài khoản bị từ chối hoặc tự động từ chối được đăng ký lại bằng cùng email và được thông báo khi đăng nhập. | Policy | Quản lý tài khoản | Admin | SRC-010 (quyết định ủy quyền) |
 
 ---
 
@@ -328,6 +335,8 @@ Tài liệu tăng nhanh (SRC-002). Quản lý đã yêu cầu làm MVP (SRC-001)
 | RSK-004 | Baseline chưa đo | Risk | Số liệu là ước lượng → không chứng minh được cải thiện thật | Cao | Business Analyst | Đo baseline trước pilot (ASM-004) | Trước pilot |
 | RSK-005 | Một người giữ mọi vai trò | Risk | BA là tác giả, sponsor, business owner, approver → không có kiểm tra độc lập → bỏ sót lỗi hoặc sai lệch | Trung bình | Business Analyst | Mời người review độc lập (OQ-015) | Trước baseline BRD |
 | RSK-006 | Hạn 14 ngày gấp | Risk | 22 BR trong 14 ngày với chi phí tối thiểu → không kịp → bỏ bớt yêu cầu hoặc giao MVP kém chất lượng | Cao | Business Analyst | Xếp ưu tiên Must/Should; hoãn các yêu cầu Should khi cần; xác nhận phạm vi (OQ-010) | Trước 2026-11-03 |
+| RSK-007 | Hạn mức tệp không hoàn lại | Risk | Xóa không trả hạn mức (BRU-007) → người dùng dùng hết 100 tệp → không upload được nữa, kể cả khi đã xóa tài liệu cũ | Trung bình | Business Analyst | Theo dõi số tệp đã upload mỗi người trong pilot; admin báo cáo người dùng gần chạm hạn mức; cân nhắc nới hạn mức nếu cần | Hết pilot (2027-01-02) |
+| RSK-008 | Không có admin dự phòng | Risk | Admin duy nhất vắng mặt → đăng ký không được duyệt trong 7 ngày → bị tự động từ chối → người dùng mất thời gian | Thấp–Trung bình | Business Analyst | Người bị từ chối được đăng ký lại (BRU-010); theo dõi số đăng ký bị tự động từ chối (EVT-002) | Hết pilot (2027-01-02) |
 
 ---
 
@@ -381,10 +390,10 @@ Tài liệu tăng nhanh (SRC-002). Quản lý đã yêu cầu làm MVP (SRC-001)
 | OQ-007 | Thời gian lưu giữ và thời hạn xóa | BR-004, BR-013, BRU-003 | Business Analyst | 2026-10-20 | Resolved | SRC-002: lưu đến khi người dùng xóa; xóa là xóa luôn. |
 | OQ-008 | Có cần đăng nhập và xác thực người dùng không? | BR-012, AC-012, RSK-002 | Business Analyst | 2026-10-20 | Resolved | SRC-003: cần đăng nhập. Cách cấp tài khoản: OQ-018. |
 | OQ-009 | Tài liệu có chứa thông tin mật (hợp đồng, giá, khách hàng) không? | RSK-002, ASM-003, DEP-001 | Business Analyst | 2026-10-20 | Resolved | SRC-003: không có thông tin mật, nhưng không nên để công khai rộng. SRC-002: không có quy định cấm dùng AI. Cần rà soát mẫu PDF thực tế (ASM-003). |
-| OQ-010 | Xác nhận danh sách out-of-scope và deferred ở mục 5 | Phạm vi MVP | Business Analyst | Trước baseline | Open | — |
+| OQ-010 | Xác nhận danh sách out-of-scope và deferred ở mục 5 | Phạm vi MVP | Business Analyst | 2026-11-02 | Resolved | Quyết định ủy quyền (SRC-010): giữ nguyên danh sách. Lý do: khớp SRC-001 và hạn 14 ngày. |
 | OQ-011 | Ngôn ngữ tài liệu và câu hỏi | BR-011, BR-015 | Business Analyst | 2026-10-20 | Resolved | SRC-002: linh hoạt, cả tiếng Việt và tiếng Anh. |
-| OQ-012 | Có thêm business objective về độ tin cậy và bảo mật không? | Traceability của BR-007, BR-008, BR-011, BR-012, BR-013, BR-015, BR-017, BR-018, BR-019, BR-020, BR-021, BR-022 | Business Analyst | Trước baseline | Open | — |
-| OQ-013 | Người dùng có cần lưu lịch sử hội thoại không? | Có thể thêm yêu cầu | Business Analyst | Trước baseline | Open | — |
+| OQ-012 | Có thêm business objective về độ tin cậy và bảo mật không? | Traceability của BR-007, BR-008, BR-011, BR-012, BR-013, BR-015, BR-017, BR-018, BR-019, BR-020, BR-021, BR-022 | Business Analyst | 2026-11-02 | Resolved | Quyết định ủy quyền (SRC-010): không thêm business objective mới. Lý do: các BR này truy vết tới stakeholder need (SN-003, SN-004, SN-006, SN-007, SN-008), IEEE 29148 cho phép truy vết tới objective hoặc need. |
+| OQ-013 | Người dùng có cần lưu lịch sử hội thoại không? | Có thể thêm yêu cầu | Business Analyst | 2026-11-02 | Resolved | SRC-009: không cần lưu. Không thêm yêu cầu; US-014 trong PRD bị loại khỏi MVP. |
 | OQ-014 | Câu trả lời dùng ngôn ngữ nào: theo câu hỏi hay theo tài liệu? Có hỏi chéo ngôn ngữ không? | BR-015, BR-021, AC-015 | Business Analyst | 2026-10-20 | Resolved | SRC-007: theo ngôn ngữ của tài liệu (BR-021). Hỏi chéo ngôn ngữ được phép. Trường hợp nguồn khác ngôn ngữ: OQ-025. |
 | OQ-015 | Ai xác nhận độc lập? Quản lý yêu cầu MVP có phải approver không? | RSK-005, mục 14 | Business Analyst | Trước baseline | Open | — |
 | OQ-016 | Trong kho chung, ai được xóa tài liệu: chỉ người upload hay mọi thành viên? | BR-013, BR-017, BRU-004 | Business Analyst | 2026-10-20 | Resolved | SRC-003: người upload xóa tài liệu của mình; admin có toàn quyền xóa. |
@@ -394,10 +403,15 @@ Tài liệu tăng nhanh (SRC-002). Quản lý đã yêu cầu làm MVP (SRC-001)
 | OQ-020 | 14 ngày là hạn giao MVP hay hạn đo kết quả? Pilot kéo dài bao lâu? | Timeframe của BO-001..003, MET-002 | Business Analyst | 2026-10-20 | Resolved (một phần) | SRC-005: 14 ngày sau là bắt đầu pilot (2026-11-03). Thời gian kéo dài pilot: OQ-021. |
 | OQ-021 | Pilot kéo dài bao lâu và kết thúc ngày nào? | Timeframe của BO-001..003; MET-002 (dùng hàng tuần cần ít nhất vài tuần) | Business Analyst | 2026-10-20 | Resolved | SRC-006: pilot kéo dài 60 ngày, từ 2026-11-03 đến 2027-01-02. |
 | OQ-022 | Admin duyệt đăng ký trong bao lâu? | BR-022, BRU-006 | Business Analyst | 2026-10-20 | Resolved (một phần) | SRC-007: tối đa 7 ngày, quá hạn tự động từ chối. Admin dự phòng: OQ-026. |
-| OQ-023 | Giới hạn độ dài câu hỏi? (hạng mục của PRD) | PRD mục 4.2 | Business Analyst | Trước 2026-11-03 | Open | — |
-| OQ-024 | Có được ghi nội dung câu hỏi và câu trả lời để đánh giá chất lượng không? (hạng mục của PRD) | PRD mục 5.2 | Business Analyst | Trước 2026-11-03 | Open | — |
-| OQ-025 | Khi câu trả lời dựa trên nhiều tài liệu khác ngôn ngữ nhau, trả lời bằng ngôn ngữ nào? | BR-021, AC-021 | Business Analyst | Trước 2026-11-03 | Open | — |
-| OQ-026 | Người bị tự động từ chối có được thông báo và đăng ký lại không? Có admin dự phòng không? | BR-022 | Business Analyst | Trước 2026-11-03 | Open | — |
+| OQ-023 | Giới hạn độ dài câu hỏi? (hạng mục của PRD) | PRD mục 4.2 | Business Analyst | 2026-11-02 | Resolved | Quyết định ủy quyền (SRC-010): tối đa 1.000 ký tự. Con số là giả định, điều chỉnh khi có dữ liệu pilot. |
+| OQ-024 | Có được ghi nội dung câu hỏi và câu trả lời để đánh giá chất lượng không? (hạng mục của PRD) | PRD mục 5.2 | Business Analyst | 2026-11-02 | Resolved | Quyết định ủy quyền (SRC-010): không ghi nội dung. Loại EVT-009 (phản hồi đúng/sai) khỏi MVP. Lý do: khớp quyết định không lưu lịch sử; MET-003 đo bằng bộ câu hỏi chuẩn; hạn 14 ngày. |
+| OQ-025 | Khi câu trả lời dựa trên nhiều tài liệu khác ngôn ngữ nhau, trả lời bằng ngôn ngữ nào? | BR-021, AC-021 | Business Analyst | 2026-11-02 | Resolved | Quyết định ủy quyền (SRC-010): bằng tiếng Anh (BRU-009). Lý do: nhất quán với BRU-008. |
+| OQ-026 | Người bị tự động từ chối có được thông báo và đăng ký lại không? Có admin dự phòng không? | BR-022 | Business Analyst | 2026-11-02 | Resolved | Quyết định ủy quyền (SRC-010): được thông báo khi đăng nhập và đăng ký lại bằng cùng email (BRU-010). Không có admin dự phòng trong MVP, ghi RSK-008. Lý do: giữ BR-019. |
+| OQ-027 | Nếu lưu lịch sử chat, Citation của câu trả lời cũ trỏ tới tài liệu đã xóa thì xử lý thế nào? | Lịch sử chat (OQ-013), BR-013 | Business Analyst | 2026-11-02 | Resolved | Quyết định 2026-11-02: báo là đã xóa. Citation giữ tên tài liệu kèm nhãn "đã xóa". Vì không lưu lịch sử (OQ-013, SRC-009), chỉ áp dụng cho câu trả lời đang hiển thị trong phiên khi tài liệu bị xóa giữa chừng. |
+| OQ-028 | Hạn mức 100 tệp mỗi người tính tệp đang có hay tổng số đã upload? Xóa rồi upload lại được không? | BR-016, AC-016 | Business Analyst | 2026-11-02 | Resolved | SRC-008: "xóa rồi thì không upload lại". Hiểu là hạn mức tính tổng số tệp đã upload và xóa không hoàn lại (BRU-007). Đã xác nhận ở OQ-031: không cần cấm upload lại tệp đã xóa (SRC-009). |
+| OQ-029 | Ngôn ngữ của tài liệu được xác định thế nào? PDF có cả tiếng Việt lẫn tiếng Anh thì gán ngôn ngữ nào? | BR-011, BR-021 | Business Analyst | 2026-11-02 | Resolved (một phần) | SRC-008: tài liệu có cả hai ngôn ngữ coi là tiếng Anh (BRU-008). Cách nhận diện ngôn ngữ là chi tiết thiết kế, thuộc SAD. |
+| OQ-030 | Nếu lưu lịch sử chat, nội dung câu trả lời cũ lấy từ tài liệu đã xóa có phải xóa hoặc che theo không? | BR-013 (xóa vĩnh viễn), OQ-013 | Business Analyst | 2026-11-02 | Resolved | Không áp dụng: không lưu lịch sử chat (SRC-009), nên không còn câu trả lời cũ nào lưu nội dung từ tài liệu đã xóa. |
+| OQ-031 | "Xóa rồi thì không upload lại" nghĩa là chỉ xóa không hoàn lại hạn mức 100 tệp, hay còn cấm upload lại đúng tệp đã xóa? | BR-016, BRU-007, RSK-007 | Business Analyst | 2026-11-02 | Resolved | SRC-009: không cần cấm upload lại tệp đã xóa. Chỉ có quy tắc xóa không hoàn lại hạn mức (BRU-007). |
 
 ---
 
@@ -429,6 +443,9 @@ Tài liệu tăng nhanh (SRC-002). Quản lý đã yêu cầu làm MVP (SRC-001)
 | SRC-005 | Câu trả lời vòng 4 của người yêu cầu (OQ-019, OQ-020) | 1.0 | Hội thoại ngày 2026-10-20 | 2026-10-20 |
 | SRC-006 | Câu trả lời vòng 5 của người yêu cầu (OQ-021) | 1.0 | Hội thoại ngày 2026-10-20 | 2026-10-20 |
 | SRC-007 | Câu trả lời vòng 6 của người yêu cầu (UX, OQ-014, OQ-022) | 1.0 | Hội thoại ngày 2026-10-20 | 2026-10-20 |
+| SRC-008 | Câu trả lời vòng 7 của người yêu cầu (OQ-027, OQ-028, OQ-029) | 1.0 | Hội thoại ngày 2026-11-02 | 2026-11-02 |
+| SRC-009 | Câu trả lời vòng 8 của người yêu cầu (OQ-013, OQ-031) | 1.0 | Hội thoại ngày 2026-11-02 | 2026-11-02 |
+| SRC-010 | Ủy quyền của người yêu cầu: BA tự quyết các câu hỏi phụ | 1.0 | Hội thoại ngày 2026-11-02 | 2026-11-02 |
 | REF-001 | IEEE 29148-2018 | 2018 | Tiêu chuẩn | 2026-10-20 |
 
 ---
@@ -494,4 +511,4 @@ Quyết định ngày 2026-10-20 của người yêu cầu: chuyển sang review
 - **ASM-003** — rà soát mẫu PDF thực tế để xác nhận không có thông tin mật.
 - **ASM-005** — admin đối chiếu được người đăng ký với đội BD khi duyệt.
 
-Các câu hỏi chưa chặn nhưng cần trả lời: OQ-010, OQ-012, OQ-013, OQ-014, OQ-017.
+Câu hỏi chưa chặn nhưng cần trả lời: OQ-017.

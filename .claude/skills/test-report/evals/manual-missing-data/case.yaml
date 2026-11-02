@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: manual-missing-data
+expected_outcome: |
+  A Vietnamese test report from the manual results: 8 cases (5 pass, 1 fail, 1 blocked, 1 not run), the TC-106 defect rated high severity, gates G2 and G3 marked as not measured rather than passed, no invented accuracy or latency figures, a No-Go recommendation with reasons, and approval left blank.
+context:
+  scaffold_script: place-files.sh
