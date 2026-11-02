@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Quản trị{% endblock %}
+{% block body %}
+<header>
+  <strong>Quản trị — Chat với tài liệu</strong>
+  <span>{{ name }}<a href="/">Trang chính</a>
+    <form method="post" action="/logout" style="display:inline"><button type="submit">Đăng xuất</button></form></span>
+</header>
+<main>
+  <div class="card">
+    <h2>Tài khoản chờ duyệt</h2>
+    {% if pending %}
+    <table>
+      <tr><th>Email</th><th>Tên</th><th>Đăng ký lúc</th><th></th></tr>
+      {% for u in pending %}
+      <tr>
+        <td>{{ u.email }}</td><td>{{ u.display_name }}</td><td>{{ u.registered_at }}</td>
+        <td>
+          <form method="post" action="/admin/users/{{ u.id }}/approve" style="display:inline"><button class="primary small">Duyệt</button></form>
+          <form method="post" action="/admin/users/{{ u.id }}/reject" style="display:inline"><button class="small">Từ chối</button></form>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}<p class="muted">Không có tài khoản nào chờ duyệt.</p>{% endif %}
+    <p class="muted">Đăng ký chờ quá 7 ngày sẽ tự động bị từ chối.</p>
+  </div>
+
+  <div class="card">
+    <h2>Số liệu pilot (7 ngày gần nhất)</h2>
+    <table>
+      <tr><th>Người dùng đã duyệt</th><td>{{ report.approved_members }} (mục tiêu khoảng {{ report.target_users }})</td></tr>
+      <tr><th>Người dùng hoạt động 7 ngày (MET-002)</th><td>{{ report.active_last_7_days }}{% if report.active_rate is not none %} ({{ (report.active_rate * 100)|round|int }}%){% endif %}</td></tr>
+      <tr><th>Tài khoản theo trạng thái</th><td>{{ report.users }}</td></tr>
+      <tr><th>Tài liệu theo trạng thái</th><td>{{ report.documents }}</td></tr>
+      <tr><th>Số câu trả lời</th><td>{{ report.answers_total }} (có nguồn {{ report.with_citation }}, không tìm thấy {{ report.not_found }})</td></tr>
+      <tr><th>Thời gian trả lời p90</th><td>{% if report.p90_latency_ms is not none %}{{ report.p90_latency_ms }} ms{% else %}chưa có dữ liệu{% endif %}</td></tr>
+    </table>
+    <p class="muted">MET-001 (thời gian tìm thông tin) đo bằng nghiên cứu tác vụ mẫu, không có ở đây. MET-003 đo bằng bộ câu hỏi chuẩn.</p>
+  </div>
+</main>
+{% endblock %}
